@@ -1,8 +1,5 @@
 const Minterm = require("./minterm.js");
-const util = require("./util.js");
-
-const decToBin = util.decToBin;
-const valueIn = util.valueIn;
+const { decToBin, valueIn } = require("./util.js")
 
 /**
  * A class to handle processing the Quine-McCluskey Algorithm
