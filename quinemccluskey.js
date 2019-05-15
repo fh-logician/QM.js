@@ -12,6 +12,8 @@ module.exports = class QuineMcCluskey {
     constructor(variables, values) {
         this.variables = variables;
         this.values = values;
+        this.func = null;
+        this.func = this.getFunction();
     }
 
     // Helper Methods
@@ -286,6 +288,11 @@ module.exports = class QuineMcCluskey {
      */
     getFunction() {
 
+        // Check if function already exists, return it
+        if (this.func != null) {
+            return this.func;
+        }
+
         // Get the prime implicants and variables
         let primeImplicants = this.solve();
 
@@ -312,6 +319,11 @@ module.exports = class QuineMcCluskey {
         for (let i = 0; i < primeImplicants.length; i++) {
             let implicant = primeImplicants[i];
 
+            // Add parentheses if necessary
+            if ((implicant.getValue().match(/-/g) || []).length < this.variables.length) {
+                result += "(";
+            }
+
             // Iterate through all the bits in the implicants value
             for (let j = 0; j < implicant.getValue().length; j++) {
 
@@ -326,6 +338,12 @@ module.exports = class QuineMcCluskey {
                 }
             }
 
+            // Add parentheses if necessary
+            if ((implicant.getValue().match(/-/g) || []).length < this.variables.length) {
+                result += ")";
+            }
+
+            // Combine minterms with an OR operator
             if (i < primeImplicants.length - 1) {
                 result += " OR ";
             }
