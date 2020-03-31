@@ -9,9 +9,14 @@ module.exports = class QuineMcCluskey {
     /**
      * Creates a new QuineMcCluskey object to process the Quine-Mccluskey Algorithm
      */
-    constructor(variables, values) {
+    constructor(variables, values, dontCares = [], isMaxterm = false) {
+        values.sort();
         this.variables = variables;
         this.values = values;
+        this.allValues = values.concat(dontCares);
+        this.allValues.sort();
+        this.dontCares = dontCares;
+        this.isMaxterm = isMaxterm;
         this.func = null;
         this.func = this.getFunction();
     }
@@ -43,7 +48,7 @@ module.exports = class QuineMcCluskey {
         }
 
         // Iterate through values
-        for (const value of this.values) {
+        for (const value of this.allValues) {
 
             // Count number of 1's in value's bit equivalent
             let count = 0;
@@ -231,7 +236,9 @@ module.exports = class QuineMcCluskey {
             }
             if (uses == 1 && !valueIn(last, essentialPrimeImplicants)) {
                 for (const v of last.getValues()) {
-                    valuesUsed[this.values.indexOf(v)] = true;
+                    if (!valueIn(v, this.dontCares)) {
+                        valuesUsed[this.values.indexOf(v)] = true;
+                    }
                 }
                 essentialPrimeImplicants.push(last);
             }
@@ -254,7 +261,18 @@ module.exports = class QuineMcCluskey {
         let newPrimeImplicants = [];
         for (const implicant of primeImplicants) {
             if (!valueIn(implicant, essentialPrimeImplicants)) {
-                newPrimeImplicants.push(implicant);
+
+                // Check if the current implicant only consists of dont cares
+                let add = false;
+                for (const value of implicant.getValues()) {
+                    if (!valueIn(value, this.dontCares)) {
+                        add = true;
+                        break;
+                    }
+                }
+                if (add) {
+                    newPrimeImplicants.push(implicant);
+                }
             }
         }
         primeImplicants = newPrimeImplicants;
@@ -320,32 +338,32 @@ module.exports = class QuineMcCluskey {
             let implicant = primeImplicants[i];
 
             // Add parentheses if necessary
-            if ((implicant.getValue().match(/-/g) || []).length < this.variables.length) {
+            if ((implicant.getValue().match(/-/g) || []).length < this.variables.length - 1) {
                 result += "(";
             }
 
             // Iterate through all the bits in the implicants value
             for (let j = 0; j < implicant.getValue().length; j++) {
 
-                if (implicant.getValue().charAt(j) == "0") {
+                if (implicant.getValue().charAt(j) == (this.isMaxterm? "1": "0")) {
                     result += "NOT ";
                 }
                 if (implicant.getValue().charAt(j) != "-") {
                     result += this.variables[j];
                 }
                 if ((implicant.getValue().substring(j + 1).match(/-/g) || []).length < implicant.getValue().length - j - 1 && implicant.getValue().charAt(j) != "-") {
-                    result += " AND ";
+                    result += this.isMaxterm? " OR ": " AND ";
                 }
             }
 
             // Add parentheses if necessary
-            if ((implicant.getValue().match(/-/g) || []).length < this.variables.length) {
+            if ((implicant.getValue().match(/-/g) || []).length < this.variables.length - 1) {
                 result += ")";
             }
 
             // Combine minterms with an OR operator
             if (i < primeImplicants.length - 1) {
-                result += " OR ";
+                result += this.isMaxterm? " AND ": " OR ";
             }
         }
 
