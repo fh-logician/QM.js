@@ -9,8 +9,9 @@ There are 2 different ways to get a simplified logical expression:
 Both methods will get you the same function but they differ by how they are connected together
  * `A' + B'` (Minterm method) is the exact same as `AB` (Maxterm method)
  
-Note, however, that when you actually receive the simplified expressions, they will not be in boolean algebra
-For example, the above expressions would look like `NOT A OR NOT B`, `A AND B`
+Note, however, that when you actually receive the simplified expressions, they will not be in boolean algebra.
+
+For example, the above expressions would look like `NOT A OR NOT B`, `A AND B`.
 This is done to give you freedom to implement it as you see fit by simply replacing `NOT` with `!`, for example.
 
 ### Minterm Method
