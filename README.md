@@ -22,10 +22,10 @@ console.log(g.getFunction()); // --> A + B*C
 ### Maxterm Method
 
 ```js
-f = new QuineMcCluskey("ABC", [0, 1, 2, 3], [], isMaxterm = true);
+f = new QuineMcCluskey("ABC", [0, 1, 2, 3], [], true);
 console.log(f.solve()); // --> A'
 
-g = new QuineMcCluskey("ABC", [0, 1, 2], [], isMaxterm = true);
+g = new QuineMcCluskey("ABC", [0, 1, 2], [], true);
 console.log(g.solve()); // --> (A'+B')*(A'+C')
 ```
 Note that the parameters for `QuineMcCluskey` are `QuineMcCluskey(variables, values, dontCares = [], isMaxterm = false);`
@@ -35,10 +35,10 @@ an incorrect simplified expression.
 ### Using Don't Cares
 
 ```js
-f = new QuineMcCluskey("ABC", [0, 1], dont_cares = [4, 5, 6, 7]);
+f = new QuineMcCluskey("ABC", [0, 1], [4, 5, 6, 7]);
 console.log(f.solve()); // --> B'
 
-g = new QuineMcCluskey("ABCD", [0, 2, 4, 8, 12], dont_cares = [6, 10, 11, 14, 15]);
+g = new QuineMcCluskey("ABCD", [0, 2, 4, 8, 12], [6, 10, 11, 14, 15]);
 console.log(g.solve()); // --> D'
 ```
 
